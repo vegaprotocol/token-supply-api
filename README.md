@@ -6,6 +6,11 @@ This API returns the circulating supply of VEGA tokens by reading directly from 
 
 This app is a simple Node.js Express API. You can build and run the service by running `yarn install` followed by `node index.js`.
 
+The API exposes two endpoints:
+
+* http://localhost:3000/circulating
+* http://localhost:3000/total
+
 ## Environment
 
 This app requires the following environment variables to be set:
