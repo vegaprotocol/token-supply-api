@@ -5,3 +5,9 @@ This API returns the circulating supply of VEGA tokens by reading directly from 
 ## Build and Run
 
 This app is a simple Node.js Express API. You can build and run the service by running `yarn install` followed by `node index.js`.
+
+## Environment
+
+This app requires the following environment variables to be set:
+
+* `INFURA_KEY`
