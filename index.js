@@ -3,15 +3,19 @@ const Web3 = require('web3');
 const token_abi = require('./token_abi.js');
 const vesting_abi = require('./vesting_abi.js');
 
-const INFURA_KEY = process.env.INFURA_KEY;
+const START_BLOCK = process.env.START_BLOCK;
+const END_BLOCK = process.env.END_BLOCK;
+const PROVIDER_URL = process.env.PROVIDER_URL;
+const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
+const VESTING_ADDRESS = process.env.VESTING_ADDRESS;
 
-const web3 = new Web3(`https://mainnet.infura.io/v3/${INFURA_KEY}`);
+const web3 = new Web3(PROVIDER_URL);
 
-const token_contract = new web3.eth.Contract(token_abi, '0xcB84d72e61e383767C4DFEb2d8ff7f4FB89abc6e');
-const vesting_contract = new web3.eth.Contract(vesting_abi, '0x23d1bFE8fA50a167816fBD79D7932577c06011f4');
+const token_contract = new web3.eth.Contract(token_abi, TOKEN_ADDRESS);
+const vesting_contract = new web3.eth.Contract(vesting_abi, VESTING_ADDRESS);
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 const get_total_supply = async () => {
   return Number(web3.utils.fromWei(await token_contract.methods.totalSupply().call()));
@@ -19,8 +23,8 @@ const get_total_supply = async () => {
 
 const get_total_unlocked = async () => {
   const tranche_created = await vesting_contract.getPastEvents('Tranche_Created', {
-    fromBlock: 12834523,
-    toBlock: 'latest'
+    fromBlock: START_BLOCK,
+    toBlock: END_BLOCK
   });
   const tranches = {};
   tranche_created.forEach((e) => {
@@ -35,8 +39,8 @@ const get_total_unlocked = async () => {
     }
   });
   const tranche_balance_added = await vesting_contract.getPastEvents('Tranche_Balance_Added', {
-    fromBlock: 12834523, 
-    toBlock: 'latest'
+    fromBlock: START_BLOCK, 
+    toBlock: END_BLOCK
   });
   let unlocked = 0;
   tranche_balance_added.forEach((e) => {

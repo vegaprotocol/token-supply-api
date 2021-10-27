@@ -4,4 +4,8 @@ This API returns the circulating supply of VEGA tokens by reading directly from 
 
 ## Build and Run
 
-This app is a simple Node.js Express API. You can build and run the service by running `yarn install` followed by `node index.js`.
+The easiest way to build and run this app is using Docker:
+
+1. Copy `.env.sample` to `.env` and provide values for the defined variables
+2. Run `docker build -t token-supply-api .`
+3. Run `docker run -p 8080:8080 --env-file ./.env token-supply-api`
