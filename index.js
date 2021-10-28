@@ -2,12 +2,14 @@ const express = require('express');
 const Web3 = require('web3');
 const token_abi = require('./token_abi.js');
 const vesting_abi = require('./vesting_abi.js');
+const cache = require('memory-cache');
 
 const START_BLOCK = process.env.START_BLOCK;
 const END_BLOCK = process.env.END_BLOCK;
 const PROVIDER_URL = process.env.PROVIDER_URL;
 const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
 const VESTING_ADDRESS = process.env.VESTING_ADDRESS;
+const CACHE_DURATION = process.env.CACHE_DURATION;
 
 const web3 = new Web3(PROVIDER_URL);
 
@@ -16,6 +18,25 @@ const vesting_contract = new web3.eth.Contract(vesting_abi, VESTING_ADDRESS);
 
 const app = express();
 const port = 8080;
+
+const memCache = new cache.Cache();
+const cacheMiddleware = (duration) => {
+  return (req, res, next) => {
+    const key =  '__express__' + req.originalUrl || req.url;
+    const cacheContent = memCache.get(key);
+    if(cacheContent) {
+      res.send(cacheContent);
+      return;
+    } else {
+      res.sendResponse = res.send;
+      res.send = (body) => {
+        memCache.put(key, body, duration*1000);
+        res.sendResponse(body)
+      };
+      next();
+    }
+  };
+};
 
 const get_total_supply = async () => {
   return Number(web3.utils.fromWei(await token_contract.methods.totalSupply().call()));
@@ -53,12 +74,12 @@ const get_total_unlocked = async () => {
   return unlocked;
 };
 
-app.get('/circulating', async (req, res) => {
+app.get('/circulating', cacheMiddleware(CACHE_DURATION), async (req, res) => {
   const unlocked = await get_total_unlocked();
   res.send(unlocked.toString());
 });
 
-app.get('/total', async (req, res) => {
+app.get('/total', cacheMiddleware(CACHE_DURATION), async (req, res) => {
   const total_supply = await get_total_supply();
   res.send(total_supply.toString());
 });
