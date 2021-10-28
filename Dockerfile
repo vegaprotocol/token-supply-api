@@ -1,4 +1,4 @@
-FROM node:16
+FROM mhart/alpine-node:16
 
 WORKDIR /usr/src/app
 
@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY *.js ./
 
 EXPOSE 8080
 CMD [ "node", "index.js" ]
