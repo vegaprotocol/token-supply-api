@@ -5,9 +5,10 @@ name: Docker
 "on":
   pull_request:
     branches:
-      - develop
       - main
   push:
+    branches:
+      - main
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
       - "v[0-9]+.[0-9]+.[0-9]+-pre[0-9]+"
@@ -36,7 +37,7 @@ jobs:
         id: vars
         run: |
           ref="$(echo -n "${GITHUB_REF#refs/*/}" | tr -c 'A-Za-z0-9._' -)"
-          if [[ "$ref" == "develop" ]] ; then ref=latest ; fi
+          if [[ "$ref" == "main" ]] ; then ref=latest ; fi
           echo ::set-output "name=tag::$ref"
 
       - name: Build
