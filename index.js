@@ -11,6 +11,39 @@ const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS;
 const VESTING_ADDRESS = process.env.VESTING_ADDRESS;
 const CACHE_DURATION = process.env.CACHE_DURATION;
 
+if(!START_BLOCK) {
+  console.error("$START_BLOCK must be defined");
+  process.exit(0);
+}
+
+if(!END_BLOCK) {
+  console.error("$END_BLOCK must be defined");
+  process.exit(0);
+}
+
+
+if(!PROVIDER_URL) {
+  console.error("$PROVIDER_URL must be defined");
+  process.exit(0);
+}
+
+
+if(!TOKEN_ADDRESS) {
+  console.error("$TOKEN_ADDRESS must be defined");
+  process.exit(0);
+}
+
+
+if(!VESTING_ADDRESS) {
+  console.error("$VESTING_ADDRESS must be defined");
+  process.exit(0);
+}
+
+if(!CACHE_DURATION) {
+  console.error("$CACHE_DURATION must be defined");
+  process.exit(0);
+}
+
 const web3 = new Web3(PROVIDER_URL);
 
 const token_contract = new web3.eth.Contract(token_abi, TOKEN_ADDRESS);
